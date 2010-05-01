@@ -44,6 +44,27 @@ Towel.Effect = new Class({
 	}
 });
 
+Towel.Effect.On = new Class({
+    Extends: Towel.Effect,
+    
+    initialize: function(event, listener) {
+        this.parent();
+        
+        this.event = event;
+        this.listener = listener;
+    },
+    
+    apply: function() {
+        this.event.add(this.listener);
+        this.parent();
+    },
+    
+    cancel: function() {
+        this.event.remove(this.listener);
+        this.parent();
+    }
+});
+
 Towel.Effect.Class = new Class({
 	Extends: Towel.Effect,
 	
@@ -56,12 +77,12 @@ Towel.Effect.Class = new Class({
 	
 	apply: function() {
 		this.element.addClass(this.className);
-		this.begin.fire();
+        this.parent();
 	},
 	
 	cancel: function() {
 		this.element.removeClass(this.className);
-		this.end.fire();
+        this.parent();
 	}
 });
 
@@ -77,13 +98,17 @@ Towel.Effect.Style = new Class({
 	
 	apply: function() {
 		this.towel.dom.addStyle(this.style);
-		this.begin.fire();
+        this.parent();
 	},
 	
 	cancel: function() {
 		this.towel.dom.removeStyle(this.style);
-		this.end.fire();
-	}
+        this.parent();
+	},
+    
+    update: function() {
+        this.towel.dom.updateStyle();
+    }
 });
 
 Towel.Effect.Morph = new Class({

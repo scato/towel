@@ -75,7 +75,7 @@ Towel.Event.Interval = new Class({
 		var id = setInterval(function() {
 			var time = $time() - start;
 			
-			this.last = $lambda(time);
+            prev = $time();
 			listener(time);
 		}.bind(this), this.ms);
 		
