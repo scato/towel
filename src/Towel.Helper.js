@@ -39,7 +39,9 @@ Towel.Helper.DOM = new Class({
 		
 		this.styleList.each(function(style) {
 			for(var p in style) {
-				currentStyle[p] = style[p];
+	            if(style.hasOwnProperty(p)) {
+	                currentStyle[p] = style[p];
+	            }
 			}
 		});
 		
@@ -110,58 +112,60 @@ Towel.Helper.UI = new Class({
 	down: function() {
 		return new Towel.Period.Phase(this._event("mousedown"), new Towel(document).ui._event('mouseup'));
 	},
-    
-    move: function() {
-        return this._event('mousemove');
-    },
+	
+	move: function() {
+	    return this._event('mousemove');
+	},
 	
 	// phase in which the element is dragged
 	drag: function() {
 		var down = this.down();
 		var move = new Towel(document).ui.move();
-        
-        return down.delay(move);
+	    
+	    return down.delay(move);
 	},
-    
-    focus: function() {
-        return new Towel.Period.Phase(this._event('focus'), this._event('blur'));
-    },
-    
-    // partialy fixed keypress event
-    // TODO: implement all result by http://unixpapa.com/js/key.html
-    stroke: function() {
-        return this._event('keypress').filter(function(event) {
-            switch(event.key) {
-                case 'up':
-                case 'down':
-                case 'left':
-                case 'right':
-                case 'tab':
-                    return false;
-                case 'enter':
-                    if(event.target.tagName.toLowerCase() !== 'textarea') {
-                        return false;
-                    }
-                default:
-                    return (event.event.charCode && !event.alt && !event.control);
-                case 'delete':
-                case 'backspace':
-                    return true;
-            }
-        });
-    },
-    
-    // phase in which the element value is being altered
-    alter: function(ms) {
-        var stroking = new Towel.Period.Cycle(this.stroke());
-        var delay = new Towel.Event.Timeout(ms || 500);
-        
-        return stroking.delay(delay).not().advance(this.stroke());
-    },
-    
-    change: function() {
-        return this._event('change');
-    }
+	
+	focus: function() {
+	    return new Towel.Period.Phase(this._event('focus'), this._event('blur'));
+	},
+	
+	// partialy fixed keypress event
+	// TODO: implement all result by http://unixpapa.com/js/key.html
+	stroke: function() {
+	    return this._event('keypress').filter(function(event) {
+	        switch(event.key) {
+	            case 'up':
+	            case 'down':
+	            case 'left':
+	            case 'right':
+	            case 'tab':
+	                return false;
+	            case 'delete':
+	            case 'backspace':
+	                return true;
+	            case 'enter':
+	                if(event.target.tagName.toLowerCase() !== 'textarea') {
+	                    return false;
+	                }
+	                
+	                return (event.event.charCode && !event.alt && !event.control);
+	            default:
+	                return (event.event.charCode && !event.alt && !event.control);
+	        }
+	    });
+	},
+	
+	// phase in which the element value is being altered
+	alter: function(ms) {
+	    var stroking = new Towel.Period.Cycle(this.stroke());
+	    var delay = new Towel.Event.Timeout(ms || 500);
+	    
+	    return stroking.delay(delay).not().advance(this.stroke());
+	},
+	
+	change: function() {
+	    return this._event('change');
+	}
 });
 
 Towel.register("ui", Towel.Helper.UI);
@@ -192,7 +196,6 @@ Towel.Helper.FX = new Class({
 	},
 	
 	zoom: function(duration, shape) {
-		var currentStyle = new Towel(this.element).dom.currentStyle();
 		var position = this.element.getPosition();
 		var size = this.element.getSize();
 		
