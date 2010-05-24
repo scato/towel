@@ -1,5 +1,9 @@
 var Towel = new Class({
 	initialize: function(el, nc) {
+        if(el === document) {
+            el = document.documentElement;
+        }
+        
 		this.element = $(el, nc);
 		
 		if(this.element.towel !== undefined) {

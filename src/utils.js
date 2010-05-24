@@ -42,12 +42,16 @@ function $cycle(event) {
 	return new Towel.Period.Cycle(event);
 }
 
-function $class(element, className) {
-	return new Towel.Effect.Class(element, className);
+function $className(element, className) {
+	return new Towel.Effect.ClassName(element, className);
 }
 
 function $style(element, style) {
 	return new Towel.Effect.Style(element, style);
+}
+
+function $on(event, listener) {
+    return new Towel.Effect.On(event, listener);
 }
 
 function $transition(element, style, duration, shape) {

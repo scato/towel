@@ -65,7 +65,7 @@ Towel.Effect.On = new Class({
     }
 });
 
-Towel.Effect.Class = new Class({
+Towel.Effect.ClassName = new Class({
 	Extends: Towel.Effect,
 	
 	initialize: function(element, className) {

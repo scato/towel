@@ -127,5 +127,39 @@ Towel.Event = new Class({
 		this.add(listener);
 		
 		return delegate;
-	}
+	},
+    
+    combine: function(func) {
+        var event = new Towel.Event();
+        var first = true;
+        var last;
+        
+        this.add(function(e) {
+            if(first) {
+                last = e;
+                first = false;
+            } else {
+                event.fire(func(last, e));
+                last = e;
+            }
+        });
+        
+        return event;
+    },
+    
+    sample: function(timer) {
+        var source = this;
+        
+        return timer.after(source).map(function() {
+            return source.last();
+        });
+    },
+    
+    before: function(event) {
+        return this.during(new Towel.Period.Phase(new Towel.Event.Now(), event));
+    },
+    
+    after: function(event) {
+        return this.during(new Towel.Period.Phase(event, new Towel.Event.Never()));
+    }
 });

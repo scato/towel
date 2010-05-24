@@ -18,7 +18,10 @@ Towel.Helper.DOM = new Class({
 	initStyle: function() {
 		if(!this.styleList) {
 			this.styleList = [];
-			if(this.element.hasAttribute("style")) {
+			if(
+                typeof this.element.hasAttribute === 'function' && this.element.hasAttribute("style")
+                || this.element.getAttribute('style') !== null
+            ) {
 				var style = {};
 				
 				Towel.Styles.each(function(name) {
@@ -165,7 +168,23 @@ Towel.Helper.UI = new Class({
 	
 	change: function() {
 	    return this._event('change');
-	}
+	},
+    
+    mousePosition: function() {
+        var move = this._event('mousemove');
+        var up = this._event('mouseup');
+        var down = this._event('mousedown');
+        
+        return move.or(up).or(down).map(function(e) {
+            return {x: e.page.x, y: e.page.y, t: $time()};
+        });
+    },
+    
+    mouseMovement: function() {
+        return this.mousePosition().combine(function(a, b) {
+            return {x: b.x - a.x, y: b.y - a.y, t: b.t - a.t};
+        });
+    }
 });
 
 Towel.register("ui", Towel.Helper.UI);
@@ -211,7 +230,43 @@ Towel.Helper.FX = new Class({
 		};
 		
 		return new Towel.Transition(this.element, style, duration, shape);
-	}
+	},
+    
+    className: function(className) {
+        return new Towel.Effect.ClassName(this.element, style);
+    },
+    
+    style: function(style) {
+        return new Towel.Effect.Style(this.element, style);
+    },
+    
+    position: function() {
+        if(this._position === undefined) {
+            var relative = this.element.getOffsetParent();
+            
+            this._position = this.style({
+                'left': this.element.getCoordinates(relative).left,
+                'top': this.element.getCoordinates(relative).top
+            });
+            
+            this._position.apply();
+        }
+        
+        return this._position;
+    },
+    
+    follow: function() {
+        var position = this.position();
+        var movement = new Towel(document).ui.mouseMovement();
+        
+        var follow = new Towel.Effect.On(movement, function(e) {
+            position.style.left += e.x;
+            position.style.top += e.y;
+            position.update();
+        });
+        
+        return follow;
+    }
 });
 
 Towel.register("fx", Towel.Helper.FX);
