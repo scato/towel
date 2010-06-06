@@ -14,7 +14,7 @@ var Towel = new Class({
 		
 		for(var p in Towel.helpers) {
 			if(Towel.helpers.hasOwnProperty(p)) {
-				this[p] = new Towel.helpers[p](this.element);
+				this[p] = new Towel.helpers[p](this.element, this);
 			}
 		}
 	}

@@ -57,7 +57,7 @@ Towel.Transformation = new Class({
             
             if($type(this.style[p]) === 'array') {
                 this.style[p] = this.style[p].map(function(value) {
-                    if($type(value) === 'number' && value < 0.000001) {
+                    if($type(value) === 'number' && Math.abs(value) < 0.000001) {
                         return 0;
                     } else {
                         return value;

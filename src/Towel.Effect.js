@@ -13,6 +13,15 @@ Towel.Effect = new Class({
 		return this.apply.bind(this);
 	},
 	
+    bundle: function(effect) {
+        var bundle = new Towel.Effect();
+        
+        bundle.add(this);
+        bundle.add(effect);
+        
+        return bundle;
+    },
+    
 	chain: function(effect) {
 		var chain = new Towel.Effect();
 		
